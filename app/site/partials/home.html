@@ -54,7 +54,7 @@
 					<td>{{item.marketPrice | currency}}</td>
 					<td class="delete"><button class="btn btn-danger" ng-click="ctrl.deleteStock(item._id)">X</button></td>
 					<td class="update"><button class="btn btn-info" ng-click="ctrl.updateStock(item._id)">?</button></td>
-					<td class="chart"><button class="btn btn-success" ng-click="ctrl.makeChart(item.ticker); ctrl.scrollTo('graph');">!</button></td>
+					<td class="chart"><button class="btn btn-success" ng-click="ctrl.makeChart(item.ticker)">!</button></td>
 				</tr>
 			</tbody>
 			<tfoot>

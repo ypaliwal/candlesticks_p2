@@ -21,8 +21,12 @@
 		
 		homeVm.protfolioTotal = 0;
 		homeVm.totalBookValue = 0;
-		homeVm.chartLoaded = false;
 		homeVm.chartTitle = "";
+		homeVm.chartLoaded = false;
+
+		homeVm.chartLoadArr = [];
+		
+		
 
 
 		// GET METHOD to get ALL stock entries
@@ -146,52 +150,42 @@
 			});
 		}
 
-		function makeChart(ticker) {
-			homeVm.chartLoaded = true;
-			console.log(ticker);
-			console.log(StockSrv[ticker + '_values']);
-			console.log(StockSrv[ticker + '_dates']);
-			
-			// if(homeVm.chartLoaded) {
+		function makeChart(tickerInput) {
+			if(homeVm.chartLoaded) {
+				scrollTo('graph');
+			}
 
-				// delete the current chart by 
+			homeVm.chartLoaded = true;
+
+			if((tickerInput != homeVm.chartLoadArr[0]) && (tickerInput != homeVm.chartLoadArr[1])) {
+
+				homeVm.config.data.labels = StockSrv[tickerInput + '_dates'];				
+				homeVm.chartLoadArr.unshift(tickerInput);
+
 				$("#canvas").remove();
 				$("#canvas-wrapper").append('<canvas id="canvas"></canvas>');
 				
-				// update the config info
-				homeVm.config.data.labels = StockSrv[ticker + '_dates'];
-				homeVm.config.data.datasets[0].data = StockSrv[ticker + '_values'];
-				homeVm.config.data.datasets[0].label = ticker;
-				homeVm.chartTitle = ("Stock Chart for " + StockSrv.stockTables[ticker + '_compName']);
+				for(var i = 0; i < 2; i++){
+					if (homeVm.chartLoadArr[i] != undefined){
+						var ticker = homeVm.chartLoadArr[i];
 
-				// homeVm.config.data.datasets[0].backgroundColor = 'rgba(217, 83, 71, 0.75)';
-				// homeVm.config.data.datasets[0].pointBorderColor = 'rgba(217, 83, 71, 1)';
+						homeVm.config.data.datasets[i].data = StockSrv[ticker + '_values'];
+						homeVm.config.data.datasets[i].label = ticker;
 
-				homeVm.config.data.datasets[0].backgroundColor = randomColor();
-				homeVm.config.data.datasets[0].pointBorderColor = randomColor();
-
+						homeVm.config.data.datasets[i].backgroundColor = randomColor(0.6);
+						homeVm.config.data.datasets[i].pointBorderColor = randomColor();
+					}
+				}
 				// create the chart
 				var ctx = document.getElementById("canvas").getContext("2d");
 				window.myLine = new Chart(ctx, homeVm.config);
-				
-			// } else {
-			// 	// update the config info
-			// 	homeVm.config.data.labels = StockSrv[ticker + '_dates'];
-			// 	homeVm.config.data.datasets[0].data = StockSrv[ticker + '_values'];
-			// 	homeVm.config.data.datasets[0].label = ticker;
-			// 	homeVm.chartTitle = ("Stock Chart for " + StockSrv.stockTables[ticker + '_compName'].toString());
-				
-				
-			// 	// dataset.pointBackgroundColor = color;
-			// 	// dataset.pointBorderWidth = 1;
-				
-			// 	// create the chart
-			// 	var ctx = document.getElementById("canvas").getContext("2d");
-   //    			window.myLine = new Chart(ctx, homeVm.config);
-				
-			// 	// set chartLoaded to 'true'
-			// 	homeVm.chartLoaded = true;
-			// }
+
+				homeVm.chartTitle = ("Stock Chart for " + StockSrv.stockTables[homeVm.chartLoadArr[0] + '_compName']);
+				if(homeVm.chartLoadArr[1] != undefined) {
+					homeVm.chartTitle += (' and ' + StockSrv.stockTables[homeVm.chartLoadArr[1] + '_compName']);
+				}
+
+			}
 		}
 
 		// ADD A STOCK VIA BUTTON
@@ -255,6 +249,9 @@
 				labels: [], // EXAMPLE: labels: ["January", "February", "March", "April", "May", "June", "July", "August"],
 				datasets: [{
 					label: "My First dataset", // EXAMPLE: label: "My First dataset",
+					data: [] // EXAMPLE: data: [10, 12, 33, 41, 55, 40, 22, 21],
+				},{
+					label: "Select another Stock", // EXAMPLE: label: "My First dataset",
 					data: [] // EXAMPLE: data: [10, 12, 33, 41, 55, 40, 22, 21],
 				}]
 			},
